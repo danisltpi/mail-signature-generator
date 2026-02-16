@@ -12,7 +12,7 @@ fetch("signature-template.html")
     const user = {
       FIRST_NAME: "Max",
       LAST_NAME: "Mustermann",
-      JOB_TITLE: "Gigachad",
+      JOB_TITLE: "Vorstand",
       MOBILE: "+49 170 1234567",
       EMAIL: "test.testi@cofinpro.de",
     };
