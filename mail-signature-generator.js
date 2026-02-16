@@ -24,3 +24,48 @@ fetch("signature-template.html")
 
     document.getElementsByClassName("signature-container")[0].innerHTML = html;
   });
+
+async function copySignature() {
+  const container = document.getElementsByClassName("signature-container")[0];
+  if (!container) return;
+  const html = container.innerHTML;
+  try {
+    if (navigator.clipboard && window.ClipboardItem) {
+      const blobHtml = new Blob([html], { type: "text/html" });
+      const blobText = new Blob([container.innerText], { type: "text/plain" });
+      await navigator.clipboard.write([
+        new ClipboardItem({ "text/html": blobHtml, "text/plain": blobText }),
+      ]);
+      alert("Signature copied to clipboard");
+      return;
+    }
+  } catch (err) {
+    // fall through to legacy fallback
+  }
+
+  // Fallback: use a temporary contentEditable element and execCommand
+  const fallbackEl = document.createElement("div");
+  fallbackEl.contentEditable = "true";
+  fallbackEl.style.position = "fixed";
+  fallbackEl.style.left = "-9999px";
+  fallbackEl.innerHTML = html;
+  document.body.appendChild(fallbackEl);
+  const range = document.createRange();
+  range.selectNodeContents(fallbackEl);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+  try {
+    document.execCommand("copy");
+    alert("Signature copied to clipboard");
+  } catch (e) {
+    alert("Copy failed");
+  }
+  sel.removeAllRanges();
+  document.body.removeChild(fallbackEl);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("copySignatureBtn");
+  if (btn) btn.addEventListener("click", copySignature);
+});

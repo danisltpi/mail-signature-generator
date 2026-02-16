@@ -21,34 +21,55 @@
       h1 {
         color: #333;
       }
-
-      /* .signature {
-        font-family: Arial, sans-serif;
-        line-height: 1.4;
-        margin-top: 20px;
+      #copySignatureBtn {
+        margin-top: 12px;
+        padding: 6px;
+        background: transparent;
+        color: #333;
+        border: 1px solid #e6e6e6;
+        border-radius: 6px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
       }
-      .signature p {
-        margin: 5px 0;
+      #copySignatureBtn svg {
+        width: 18px;
+        height: 18px;
+        fill: currentColor;
       }
-      .signature a {
-        color: #007bff;
-        text-decoration: none;
+      #copySignatureBtn:hover {
+        background: rgba(0, 0, 0, 0.03);
       }
-      .signature a:hover {
-        text-decoration: underline;
+      #copySignatureBtn:active {
+        transform: translateY(1px);
       }
-      .disclaimer {
-        font-size: 0.9em;
-        color: #666;
-        margin-top: 15px;
-      } */
     </style>
   </head>
   <body>
     <h1>Cofinpro Mail Signature</h1>
     <p>
       This signature is generated automatically. Just copy and paste it into
-      your email client.
+      your email client =>
+      <span>
+        <button
+          id="copySignatureBtn"
+          type="button"
+          title="Copy signature"
+          aria-label="Copy signature"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path
+              d="M16 1H4a1 1 0 0 0-1 1v12h2V3h11V1zM20 5H8a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1zm-1 14H9V7h10v12z"
+            />
+          </svg>
+        </button>
+      </span>
     </p>
     <div class="signature-container"></div>
     <script defer src="mail-signature-generator.js"></script>
