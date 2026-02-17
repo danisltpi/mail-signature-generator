@@ -6,6 +6,17 @@
 // mobile phone
 // mail
 
+const locations = {
+  FRANKFURT: `Hanauer Landstraße 211<br />
+    60314 Frankfurt am Main`,
+  BERLIN: `Alexanderplatz 1<br />
+    10178 Berlin`,
+  MUNICH: `Marienplatz 1<br />
+    80331 München`,
+  HAMBURG: `Mönckebergstraße 1<br />
+    20095 Hamburg`,
+};
+
 let signatureTemplate = null;
 fetch("signature-template.html")
   .then((res) => res.text())
@@ -16,45 +27,72 @@ fetch("signature-template.html")
       FIRST_NAME: "Max",
       LAST_NAME: "Mustermann",
       JOB_TITLE: "Vorstand",
-      LOCATION: "Frankfurt",
+      LOCATION: locations.FRANKFURT,
       MOBILE: "+49 170 1234567",
       EMAIL: "test.testi@cofinpro.de",
+    let lastDerivedEmail = "";
+
+    function deriveEmailFromNames(first, last) {
+      const sanitize = (s) =>
+        s
+          .toLowerCase()
+          .trim()
+          .replace(/\s+/g, ".")
+          .replace(/[^a-z0-9._-]/g, "");
+      if (!first || !last) return "";
+      return `${sanitize(first)}.${sanitize(last)}@cofinpro.de`;
+    }
     };
     const last = loadLast() || defaults;
     renderSignature(last);
     populateForm(last);
-    populatePresetSelect();
   });
 
 function renderSignature(user) {
   if (!signatureTemplate) return;
-  let html = signatureTemplate;
-  Object.entries(user).forEach(([key, value]) => {
-    html = html.replaceAll(`{{${key}}}`, value || "");
-  });
-  const container = document.getElementsByClassName("signature-container")[0];
-  if (container) container.innerHTML = html;
-}
-
-function getFormUser() {
+      return {
+        FIRST_NAME: val("firstName").trim(),
+        LAST_NAME: val("lastName").trim(),
+        JOB_TITLE: val("jobTitle"),
+        LOCATION: locationValue,
+        MOBILE: val("mobile"),
+        EMAIL: val("email"),
+      };
+      .replace(/[^a-z0-9._-]/g, "");
+  let email = val("email").trim();
+  if (first && last) {
+    const local = `${sanitize(first)}.${sanitize(last)}`;
+    email = `${local}@cofinpro.de`;
+  }
   return {
-    FIRST_NAME: document.getElementById("firstName").value || "",
-    LAST_NAME: document.getElementById("lastName").value || "",
-    JOB_TITLE: document.getElementById("jobTitle").value || "",
-    LOCATION: document.getElementById("location").value || "",
-    MOBILE: document.getElementById("mobile").value || "",
-    EMAIL: document.getElementById("email").value || "",
+    FIRST_NAME: first,
+    LAST_NAME: last,
+    JOB_TITLE: val("jobTitle"),
+    LOCATION: locationValue,
+    MOBILE: val("mobile"),
+    EMAIL: email,
   };
 }
 
 function populateForm(user) {
-  if (!user) return;
-  document.getElementById("firstName").value = user.FIRST_NAME || "";
-  document.getElementById("lastName").value = user.LAST_NAME || "";
-  document.getElementById("jobTitle").value = user.JOB_TITLE || "";
-  document.getElementById("location").value = user.LOCATION || "";
-  document.getElementById("mobile").value = user.MOBILE || "";
-  document.getElementById("email").value = user.EMAIL || "";
+      setVal("email", user.EMAIL);
+      // determine whether the saved email matches a derived value
+      const derived = deriveEmailFromNames(user.FIRST_NAME, user.LAST_NAME);
+      lastDerivedEmail = derived && derived === (user.EMAIL || "") ? derived : "";
+  const setVal = (id, v) => {
+    const el = document.getElementById(id);
+    if (el) el.value = v || "";
+  };
+  setVal("firstName", user.FIRST_NAME);
+  setVal("lastName", user.LAST_NAME);
+  setVal("jobTitle", user.JOB_TITLE);
+  // If the saved LOCATION matches one of our location values, set the select to the key.
+  const locKey = Object.keys(locations).find(
+    (k) => locations[k] === user.LOCATION,
+  );
+  setVal("location", locKey || user.LOCATION);
+  setVal("mobile", user.MOBILE);
+  setVal("email", user.EMAIL);
 }
 
 function debounce(fn, wait) {
@@ -78,45 +116,6 @@ function loadLast() {
   } catch (e) {
     return null;
   }
-}
-
-function loadPresets() {
-  try {
-    const raw = localStorage.getItem("sig_presets");
-    return raw ? JSON.parse(raw) : {};
-  } catch (e) {
-    return {};
-  }
-}
-
-function savePreset(name, user) {
-  if (!name) return;
-  const presets = loadPresets();
-  presets[name] = user;
-  localStorage.setItem("sig_presets", JSON.stringify(presets));
-  populatePresetSelect();
-}
-
-function deletePreset(name) {
-  if (!name) return;
-  const presets = loadPresets();
-  delete presets[name];
-  localStorage.setItem("sig_presets", JSON.stringify(presets));
-  populatePresetSelect();
-}
-
-function populatePresetSelect() {
-  const sel = document.getElementById("presetSelect");
-  if (!sel) return;
-  const presets = loadPresets();
-  // clear options except first
-  sel.innerHTML = '<option value="">--Presets--</option>';
-  Object.keys(presets).forEach((name) => {
-    const opt = document.createElement("option");
-    opt.value = name;
-    opt.textContent = name;
-    sel.appendChild(opt);
-  });
 }
 
 async function copySignature() {
@@ -158,9 +157,20 @@ async function copySignature() {
   sel.removeAllRanges();
   document.body.removeChild(fallbackEl);
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  const btn = document.getElementById("copySignatureBtn");
+        const first = (document.getElementById("firstName")?.value || "").trim();
+        const last = (document.getElementById("lastName")?.value || "").trim();
+        const emailEl = document.getElementById("email");
+        const derived = deriveEmailFromNames(first, last);
+        if (emailEl) {
+          // only overwrite when empty or previously matched the derived value
+          if (emailEl.value === "" || emailEl.value === lastDerivedEmail) {
+            emailEl.value = derived;
+            lastDerivedEmail = derived;
+          }
+        }
+        const user = getFormUser();
+        renderSignature(user);
+        saveLast(user);
   if (btn) btn.addEventListener("click", copySignature);
   // wire form inputs to live preview
   const inputs = [
@@ -180,39 +190,4 @@ document.addEventListener("DOMContentLoaded", () => {
     const el = document.getElementById(id);
     if (el) el.addEventListener("input", update);
   });
-
-  // preset buttons
-  const saveBtn = document.getElementById("savePresetBtn");
-  const loadBtn = document.getElementById("loadPresetBtn");
-  const delBtn = document.getElementById("deletePresetBtn");
-  const sel = document.getElementById("presetSelect");
-  if (saveBtn) {
-    saveBtn.addEventListener("click", () => {
-      const name = prompt("Preset name:");
-      if (!name) return;
-      savePreset(name, getFormUser());
-    });
-  }
-  if (loadBtn) {
-    loadBtn.addEventListener("click", () => {
-      const name = sel.value;
-      if (!name) return;
-      const presets = loadPresets();
-      const user = presets[name];
-      if (user) {
-        populateForm(user);
-        renderSignature(user);
-        saveLast(user);
-      }
-    });
-  }
-  if (delBtn) {
-    delBtn.addEventListener("click", () => {
-      const name = sel.value;
-      if (!name) return;
-      if (confirm(`Delete preset "${name}"?`)) {
-        deletePreset(name);
-      }
-    });
-  }
 });

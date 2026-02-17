@@ -103,12 +103,6 @@
         min-height: 80px;
       }
 
-      /* ensure rendered signature appears black (override page styles) */
-      .signature-container,
-      .signature-container * {
-        /* color: #000 !important; */
-      }
-
       /* icon-only copy button (neutral) */
       #copySignatureBtn {
         margin-top: 12px;
@@ -171,7 +165,13 @@
         <div class="form-row" style="margin-top: 8px">
           <div class="form-field">
             <label for="location">Location</label>
-            <input id="location" name="location" placeholder="Berlin" />
+            <select id="location" name="location">
+              <option value="">-- Select location --</option>
+              <option value="FRANKFURT">Frankfurt</option>
+              <option value="BERLIN">Berlin</option>
+              <option value="MUNICH">Munich</option>
+              <option value="HAMBURG">Hamburg</option>
+            </select>
           </div>
         </div>
 
@@ -180,20 +180,11 @@
             <label for="mobile">Mobile</label>
             <input id="mobile" name="mobile" placeholder="+49 170 1234567" />
           </div>
-          <!-- <div class="form-field">
+          <div class="form-field">
             <label for="email">Email</label>
             <input id="email" name="email" placeholder="you@company.com" />
-          </div> -->
+          </div>
         </div>
-
-        <!-- <div class="preset-controls" style="margin-top: 10px">
-          <select id="presetSelect" aria-label="Saved presets">
-            <option value="">-- Presets --</option>
-          </select>
-          <button id="loadPresetBtn" type="button" class="btn">Load</button>
-          <button id="savePresetBtn" type="button" class="btn">Save</button>
-          <button id="deletePresetBtn" type="button" class="btn">Delete</button>
-        </div> -->
       </div>
 
       <div>
