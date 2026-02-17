@@ -9,12 +9,18 @@
 const locations = {
   FRANKFURT: `Hanauer Landstraße 211<br />
     60314 Frankfurt am Main`,
-  BERLIN: `Alexanderplatz 1<br />
-    10178 Berlin`,
-  MUNICH: `Marienplatz 1<br />
-    80331 München`,
-  HAMBURG: `Mönckebergstraße 1<br />
-    20095 Hamburg`,
+  BERLIN: `Charlottenstraße 24<br />
+    10117 Berlin`,
+  KARLSRUHE: `Ludwig-Erhard-Allee 10<br />
+    76131 Karlsruhe `,
+  MÜNCHEN: `Landsberger Straße 302<br />
+    80687 München`,
+  KÖLN: `Im Mediapark 8<br />
+    50670 Köln`,
+  HANNOVER: `Bahnhofstraße 8<br />
+    30159 Hannover `,
+  STUTTGART: `Königstraße 10c<br />
+    70173 Stuttgart`,
 };
 
 let signatureTemplate = null;
@@ -30,18 +36,6 @@ fetch("signature-template.html")
       LOCATION: locations.FRANKFURT,
       MOBILE: "+49 170 1234567",
       EMAIL: "test.testi@cofinpro.de",
-    let lastDerivedEmail = "";
-
-    function deriveEmailFromNames(first, last) {
-      const sanitize = (s) =>
-        s
-          .toLowerCase()
-          .trim()
-          .replace(/\s+/g, ".")
-          .replace(/[^a-z0-9._-]/g, "");
-      if (!first || !last) return "";
-      return `${sanitize(first)}.${sanitize(last)}@cofinpro.de`;
-    }
     };
     const last = loadLast() || defaults;
     renderSignature(last);
@@ -50,14 +44,28 @@ fetch("signature-template.html")
 
 function renderSignature(user) {
   if (!signatureTemplate) return;
-      return {
-        FIRST_NAME: val("firstName").trim(),
-        LAST_NAME: val("lastName").trim(),
-        JOB_TITLE: val("jobTitle"),
-        LOCATION: locationValue,
-        MOBILE: val("mobile"),
-        EMAIL: val("email"),
-      };
+  let html = signatureTemplate;
+  Object.entries(user).forEach(([key, value]) => {
+    html = html.replaceAll(`{{${key}}}`, value || "");
+  });
+  const container = document.getElementsByClassName("signature-container")[0];
+  if (container) container.innerHTML = html;
+}
+
+function getFormUser() {
+  const val = (id) => {
+    const el = document.getElementById(id);
+    return el ? el.value : "";
+  };
+  const rawLoc = val("location");
+  const locationValue = locations[rawLoc] ? locations[rawLoc] : rawLoc;
+  const first = val("firstName").trim();
+  const last = val("lastName").trim();
+  const sanitize = (s) =>
+    s
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, ".")
       .replace(/[^a-z0-9._-]/g, "");
   let email = val("email").trim();
   if (first && last) {
@@ -75,10 +83,7 @@ function renderSignature(user) {
 }
 
 function populateForm(user) {
-      setVal("email", user.EMAIL);
-      // determine whether the saved email matches a derived value
-      const derived = deriveEmailFromNames(user.FIRST_NAME, user.LAST_NAME);
-      lastDerivedEmail = derived && derived === (user.EMAIL || "") ? derived : "";
+  if (!user) return;
   const setVal = (id, v) => {
     const el = document.getElementById(id);
     if (el) el.value = v || "";
@@ -157,20 +162,9 @@ async function copySignature() {
   sel.removeAllRanges();
   document.body.removeChild(fallbackEl);
 }
-        const first = (document.getElementById("firstName")?.value || "").trim();
-        const last = (document.getElementById("lastName")?.value || "").trim();
-        const emailEl = document.getElementById("email");
-        const derived = deriveEmailFromNames(first, last);
-        if (emailEl) {
-          // only overwrite when empty or previously matched the derived value
-          if (emailEl.value === "" || emailEl.value === lastDerivedEmail) {
-            emailEl.value = derived;
-            lastDerivedEmail = derived;
-          }
-        }
-        const user = getFormUser();
-        renderSignature(user);
-        saveLast(user);
+
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("copySignatureBtn");
   if (btn) btn.addEventListener("click", copySignature);
   // wire form inputs to live preview
   const inputs = [
