@@ -79,21 +79,44 @@ async function loadMasterData() {
 }
 
 function populateDataLists() {
-  const firstNameList = document.getElementById("firstNameList");
-  const lastNameList = document.getElementById("lastNameList");
+  const firstNameInput = document.getElementById("firstName");
+  const lastNameInput = document.getElementById("lastName");
+  const firstList = document.getElementById("firstNameList");
+  const lastList = document.getElementById("lastNameList");
 
-  if (firstNameList) {
+  if (firstList) {
     const uniqueFirstNames = [...new Set(masterData.map((d) => d.firstName))];
-    firstNameList.innerHTML = uniqueFirstNames
+    firstList.innerHTML = uniqueFirstNames
       .map((name) => `<option value="${name}">`)
       .join("");
   }
 
-  if (lastNameList) {
+  if (lastList) {
     const uniqueLastNames = [...new Set(masterData.map((d) => d.lastName))];
-    lastNameList.innerHTML = uniqueLastNames
+    lastList.innerHTML = uniqueLastNames
       .map((name) => `<option value="${name}">`)
       .join("");
+  }
+
+  // restore saved values and prefill
+  const last = loadLast();
+  if (last) {
+    if (firstNameInput && last.FIRST_NAME) firstNameInput.value = last.FIRST_NAME;
+    if (lastNameInput && last.LAST_NAME) lastNameInput.value = last.LAST_NAME;
+    if (firstNameInput && lastNameInput && firstNameInput.value && lastNameInput.value) {
+      findAndPrefillByName();
+    }
+  }
+
+  // restore previously saved selection if there was one
+  const last = loadLast();
+  if (last) {
+    if (firstNameSel && last.FIRST_NAME) firstNameSel.value = last.FIRST_NAME;
+    if (lastNameSel && last.LAST_NAME) lastNameSel.value = last.LAST_NAME;
+    if (firstNameSel && lastNameSel && firstNameSel.value && lastNameSel.value) {
+      // attempt to prefill other fields based on restored selection
+      findAndPrefillByName();
+    }
   }
 }
 
@@ -283,10 +306,19 @@ document.addEventListener("DOMContentLoaded", () => {
   if (firstNameEl) {
     firstNameEl.addEventListener("change", findAndPrefillByName);
     firstNameEl.addEventListener("blur", findAndPrefillByName);
+    // clicking should drop down suggestions
+    firstNameEl.addEventListener("click", () => {
+      const ev = new KeyboardEvent("keydown", { key: "ArrowDown", keyCode: 40, which: 40 });
+      firstNameEl.dispatchEvent(ev);
+    });
   }
   if (lastNameEl) {
     lastNameEl.addEventListener("change", findAndPrefillByName);
     lastNameEl.addEventListener("blur", findAndPrefillByName);
+    lastNameEl.addEventListener("click", () => {
+      const ev = new KeyboardEvent("keydown", { key: "ArrowDown", keyCode: 40, which: 40 });
+      lastNameEl.dispatchEvent(ev);
+    });
   }
 
   // wire form inputs to live preview
