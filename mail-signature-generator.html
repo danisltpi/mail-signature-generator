@@ -147,18 +147,28 @@
         <div class="form-row">
           <div class="form-field">
             <label for="firstName">First name</label>
-            <input id="firstName" name="firstName" placeholder="Max" />
+            <input
+              id="firstName"
+              name="firstName"
+              placeholder="Max"
+              list="firstNameList"
+            />
           </div>
           <div class="form-field">
             <label for="lastName">Last name</label>
-            <input id="lastName" name="lastName" placeholder="Mustermann" />
+            <input
+              id="lastName"
+              name="lastName"
+              placeholder="Mustermann"
+              list="lastNameList"
+            />
           </div>
         </div>
 
         <div class="form-row" style="margin-top: 8px">
           <div class="form-field">
             <label for="jobTitle">Job title</label>
-            <input id="jobTitle" name="jobTitle" placeholder="Vorstand" />
+            <input id="jobTitle" name="jobTitle" placeholder="Consultant" />
           </div>
         </div>
 
@@ -188,6 +198,9 @@
             <input id="email" name="email" placeholder="you@company.com" />
           </div> -->
         </div>
+
+        <datalist id="firstNameList"></datalist>
+        <datalist id="lastNameList"></datalist>
       </div>
 
       <div>

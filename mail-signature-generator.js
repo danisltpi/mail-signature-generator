@@ -23,6 +23,113 @@ const locations = {
     70173 Stuttgart`,
 };
 
+let masterData = [];
+
+// Load and parse CSV file
+async function loadMasterData() {
+  try {
+    const response = await fetch("./master-data.csv");
+    const csv = await response.text();
+    const lines = csv.trim().split("\n");
+    if (lines.length < 2) return;
+
+    // Parse CSV header
+    const headers = lines[0]
+      .split(",")
+      .map((h) => h.trim().replace(/^"|"$/g, ""));
+    const firstNameIdx = headers.findIndex((h) =>
+      h.toLowerCase().includes("first"),
+    );
+    const lastNameIdx = headers.findIndex((h) =>
+      h.toLowerCase().includes("last"),
+    );
+    const jobTitleIdx = headers.findIndex((h) =>
+      h.toLowerCase().includes("job"),
+    );
+    const locationIdx = headers.findIndex((h) =>
+      h.toLowerCase().includes("location"),
+    );
+    const mobileIdx = headers.findIndex((h) =>
+      h.toLowerCase().includes("mobile"),
+    );
+    const emailIdx = headers.findIndex((h) =>
+      h.toLowerCase().includes("email"),
+    );
+
+    // Parse data rows
+    for (let i = 1; i < lines.length; i++) {
+      const row = lines[i]
+        .split(",")
+        .map((cell) => cell.trim().replace(/^"|"$/g, ""));
+      if (row.length > 1) {
+        masterData.push({
+          firstName: row[firstNameIdx]?.trim() || "",
+          lastName: row[lastNameIdx]?.trim() || "",
+          jobTitle: row[jobTitleIdx]?.trim() || "",
+          location: row[locationIdx]?.trim() || "",
+          mobile: row[mobileIdx]?.trim() || "",
+          email: row[emailIdx]?.trim() || "",
+        });
+      }
+    }
+    populateDataLists();
+  } catch (e) {
+    console.log("Error loading master data:", e);
+  }
+}
+
+function populateDataLists() {
+  const firstNameList = document.getElementById("firstNameList");
+  const lastNameList = document.getElementById("lastNameList");
+
+  if (firstNameList) {
+    const uniqueFirstNames = [...new Set(masterData.map((d) => d.firstName))];
+    firstNameList.innerHTML = uniqueFirstNames
+      .map((name) => `<option value="${name}">`)
+      .join("");
+  }
+
+  if (lastNameList) {
+    const uniqueLastNames = [...new Set(masterData.map((d) => d.lastName))];
+    lastNameList.innerHTML = uniqueLastNames
+      .map((name) => `<option value="${name}">`)
+      .join("");
+  }
+}
+
+function findAndPrefillByName() {
+  const firstName = document.getElementById("firstName").value.trim();
+  const lastName = document.getElementById("lastName").value.trim();
+
+  if (!firstName || !lastName) return;
+
+  const match = masterData.find(
+    (d) =>
+      d.firstName.toLowerCase() === firstName.toLowerCase() &&
+      d.lastName.toLowerCase() === lastName.toLowerCase(),
+  );
+
+  if (match) {
+    const setVal = (id, v) => {
+      const el = document.getElementById(id);
+      if (el) el.value = v || "";
+    };
+    setVal("jobTitle", match.jobTitle);
+    setVal("mobile", match.mobile);
+
+    // Find location key by name
+    const locKey = Object.keys(locations).find(
+      (k) => k.toLowerCase() === match.location.toUpperCase(),
+    );
+    setVal("location", locKey || match.location);
+
+    // Re-trigger update to render signature
+    const user = getFormUser();
+    renderSignature(user);
+    saveLast(user);
+  }
+}
+
 let signatureTemplate = null;
 fetch("signature-template.html")
   .then((res) => res.text())
@@ -32,15 +139,18 @@ fetch("signature-template.html")
     const defaults = {
       FIRST_NAME: "Max",
       LAST_NAME: "Mustermann",
-      JOB_TITLE: "Vorstand",
+      JOB_TITLE: "Consultant",
       LOCATION: locations.FRANKFURT,
       MOBILE: "+49 170 1234567",
-      EMAIL: "test.testi@cofinpro.de",
+      EMAIL: "max.mustermann@cofinpro.de",
     };
     const last = loadLast() || defaults;
     renderSignature(last);
     populateForm(last);
   });
+
+// Load master data from CSV
+loadMasterData();
 
 function renderSignature(user) {
   if (!signatureTemplate) return;
@@ -166,6 +276,19 @@ async function copySignature() {
 document.addEventListener("DOMContentLoaded", () => {
   const btn = document.getElementById("copySignatureBtn");
   if (btn) btn.addEventListener("click", copySignature);
+
+  // Add autocomplete listeners for name fields
+  const firstNameEl = document.getElementById("firstName");
+  const lastNameEl = document.getElementById("lastName");
+  if (firstNameEl) {
+    firstNameEl.addEventListener("change", findAndPrefillByName);
+    firstNameEl.addEventListener("blur", findAndPrefillByName);
+  }
+  if (lastNameEl) {
+    lastNameEl.addEventListener("change", findAndPrefillByName);
+    lastNameEl.addEventListener("blur", findAndPrefillByName);
+  }
+
   // wire form inputs to live preview
   const inputs = [
     "firstName",
