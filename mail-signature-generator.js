@@ -98,22 +98,17 @@ function populateDataLists() {
       .join("");
   }
 
-  // restore saved values and prefill
+  // restore previously saved selection if there was one
   const last = loadLast();
   if (last) {
     if (firstNameInput && last.FIRST_NAME) firstNameInput.value = last.FIRST_NAME;
     if (lastNameInput && last.LAST_NAME) lastNameInput.value = last.LAST_NAME;
-    if (firstNameInput && lastNameInput && firstNameInput.value && lastNameInput.value) {
-      findAndPrefillByName();
-    }
-  }
-
-  // restore previously saved selection if there was one
-  const last = loadLast();
-  if (last) {
-    if (firstNameSel && last.FIRST_NAME) firstNameSel.value = last.FIRST_NAME;
-    if (lastNameSel && last.LAST_NAME) lastNameSel.value = last.LAST_NAME;
-    if (firstNameSel && lastNameSel && firstNameSel.value && lastNameSel.value) {
+    if (
+      firstNameInput &&
+      lastNameInput &&
+      firstNameInput.value &&
+      lastNameInput.value
+    ) {
       // attempt to prefill other fields based on restored selection
       findAndPrefillByName();
     }
@@ -303,22 +298,22 @@ document.addEventListener("DOMContentLoaded", () => {
   // Add autocomplete listeners for name fields
   const firstNameEl = document.getElementById("firstName");
   const lastNameEl = document.getElementById("lastName");
+  const openList = (el) => {
+    // attempt to open datalist by sending arrow-down key
+    const ev = new KeyboardEvent("keydown", { key: "ArrowDown", keyCode: 40, which: 40 });
+    el.dispatchEvent(ev);
+  };
   if (firstNameEl) {
     firstNameEl.addEventListener("change", findAndPrefillByName);
     firstNameEl.addEventListener("blur", findAndPrefillByName);
-    // clicking should drop down suggestions
-    firstNameEl.addEventListener("click", () => {
-      const ev = new KeyboardEvent("keydown", { key: "ArrowDown", keyCode: 40, which: 40 });
-      firstNameEl.dispatchEvent(ev);
-    });
+    firstNameEl.addEventListener("focus", () => openList(firstNameEl));
+    firstNameEl.addEventListener("click", () => openList(firstNameEl));
   }
   if (lastNameEl) {
     lastNameEl.addEventListener("change", findAndPrefillByName);
     lastNameEl.addEventListener("blur", findAndPrefillByName);
-    lastNameEl.addEventListener("click", () => {
-      const ev = new KeyboardEvent("keydown", { key: "ArrowDown", keyCode: 40, which: 40 });
-      lastNameEl.dispatchEvent(ev);
-    });
+    lastNameEl.addEventListener("focus", () => openList(lastNameEl));
+    lastNameEl.addEventListener("click", () => openList(lastNameEl));
   }
 
   // wire form inputs to live preview
