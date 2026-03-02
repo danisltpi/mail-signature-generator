@@ -116,7 +116,7 @@ function findAndPrefillByName() {
     };
     setVal("jobTitle", match.jobTitle);
     setVal("mobile", match.mobile);
-
+    setVal("email", match.email);
     // Find location key by name
     const locKey = Object.keys(locations).find(
       (k) => k.toLowerCase() === match.location.toUpperCase(),
@@ -178,7 +178,7 @@ function getFormUser() {
       .replace(/\s+/g, ".")
       .replace(/[^a-z0-9._-]/g, "");
   let email = val("email").trim();
-  if (first && last) {
+  if (!email && first && last) {
     const local = `${sanitize(first)}.${sanitize(last)}`;
     email = `${local}@cofinpro.de`;
   }
@@ -300,6 +300,11 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
   const update = debounce(() => {
     const user = getFormUser();
+    // if email input is empty but generated value exists, show it
+    const emailEl = document.getElementById("email");
+    if (emailEl && !emailEl.value && user.EMAIL) {
+      emailEl.value = user.EMAIL;
+    }
     renderSignature(user);
     saveLast(user);
   }, 250);

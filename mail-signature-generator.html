@@ -193,10 +193,10 @@
             <label for="mobile">Mobile</label>
             <input id="mobile" name="mobile" placeholder="+49 170 1234567" />
           </div>
-          <!-- <div class="form-field">
+          <div class="form-field">
             <label for="email">Email</label>
-            <input id="email" name="email" placeholder="you@company.com" />
-          </div> -->
+            <input id="email" name="email" placeholder="max@cofinpro.de" />
+          </div>
         </div>
 
         <datalist id="firstNameList"></datalist>
@@ -207,26 +207,26 @@
         <p>
           This signature is generated automatically. Just copy and paste it into
           your email client.
+          <button
+            id="copySignatureBtn"
+            type="button"
+            title="Copy signature"
+            aria-label="Copy signature"
+            class="btn"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                d="M16 1H4a1 1 0 0 0-1 1v12h2V3h11V1zM20 5H8a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1zm-1 14H9V7h10v12z"
+              />
+            </svg>
+          </button>
         </p>
         <div class="signature-container" id="preview"></div>
-        <button
-          id="copySignatureBtn"
-          type="button"
-          title="Copy signature"
-          aria-label="Copy signature"
-          class="btn"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-            focusable="false"
-          >
-            <path
-              d="M16 1H4a1 1 0 0 0-1 1v12h2V3h11V1zM20 5H8a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1zm-1 14H9V7h10v12z"
-            />
-          </svg>
-        </button>
       </div>
     </div>
     <script defer src="mail-signature-generator.js"></script>
