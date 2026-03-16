@@ -15,7 +15,7 @@
         --border: #e6e6e6;
         --radius: 10px;
         --muted: #6b7280;
-        --shadow: 0 8px 30px rgba(16,24,40,0.06);
+        --shadow: 0 8px 30px rgba(16, 24, 40, 0.06);
       }
       html,
       body {
@@ -46,12 +46,14 @@
       }
 
       .signature-form {
-        background: linear-gradient(180deg,#ffffff,#fbfdff);
+        background: linear-gradient(180deg, #ffffff, #fbfdff);
         border-radius: var(--radius);
         padding: 18px;
         box-shadow: var(--shadow);
         border: 1px solid var(--border);
-        transition: transform .12s ease, box-shadow .12s ease;
+        transition:
+          transform 0.12s ease,
+          box-shadow 0.12s ease;
       }
       .form-row {
         display: flex;
@@ -80,15 +82,18 @@
         border-radius: 8px;
         background: #fff;
         font-size: 14px;
-        box-shadow: 0 1px 0 rgba(16,24,40,0.02);
-        transition: box-shadow .12s ease, border-color .12s ease, transform .08s ease;
+        box-shadow: 0 1px 0 rgba(16, 24, 40, 0.02);
+        transition:
+          box-shadow 0.12s ease,
+          border-color 0.12s ease,
+          transform 0.08s ease;
         width: 100%;
         box-sizing: border-box;
       }
       input:focus,
       select:focus {
         outline: none;
-        box-shadow: 0 8px 20px rgba(0,120,212,0.08);
+        box-shadow: 0 8px 20px rgba(0, 120, 212, 0.08);
         border-color: var(--accent);
         transform: translateY(-1px);
       }
@@ -115,7 +120,7 @@
         background: var(--card);
         padding: 22px;
         border-radius: calc(var(--radius) - 2px);
-        box-shadow: 0 8px 24px rgba(16,24,40,0.06);
+        box-shadow: 0 8px 24px rgba(16, 24, 40, 0.06);
         border: 1px solid rgba(0, 0, 0, 0.04);
         min-height: 80px;
         max-width: 680px;
@@ -139,17 +144,23 @@
       /* copy button styling */
       #copySignatureBtn {
         padding: 8px 12px;
-        background: linear-gradient(90deg,var(--accent-orange),var(--accent-orange-2));
+        background: linear-gradient(
+          90deg,
+          var(--accent-orange),
+          var(--accent-orange-2)
+        );
         color: white;
         border: none;
         border-radius: 8px;
-        box-shadow: 0 8px 20px rgba(0,120,212,0.14);
+        box-shadow: 0 8px 20px rgba(0, 120, 212, 0.14);
         display: inline-flex;
         gap: 8px;
         align-items: center;
         font-weight: 600;
         cursor: pointer;
-        transition: transform .08s ease, box-shadow .12s ease;
+        transition:
+          transform 0.08s ease,
+          box-shadow 0.12s ease;
       }
       #copySignatureBtn svg {
         width: 18px;
@@ -158,7 +169,7 @@
       }
       #copySignatureBtn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 12px 28px rgba(249,115,22,0.22);
+        box-shadow: 0 12px 28px rgba(249, 115, 22, 0.22);
       }
       #copySignatureBtn:active {
         transform: translateY(0);
@@ -181,28 +192,18 @@
         <div class="form-row">
           <div class="form-field">
             <label for="firstName">First name</label>
-            <input
-              id="firstName"
-              name="firstName"
-              placeholder="Max"
-              list="firstNameList"
-            />
+            <input id="firstName" name="firstName" list="firstNameList" />
           </div>
           <div class="form-field">
             <label for="lastName">Last name</label>
-            <input
-              id="lastName"
-              name="lastName"
-              placeholder="Mustermann"
-              list="lastNameList"
-            />
+            <input id="lastName" name="lastName" list="lastNameList" />
           </div>
         </div>
 
         <div class="form-row" style="margin-top: 8px">
           <div class="form-field">
             <label for="jobTitle">Job title</label>
-            <input id="jobTitle" name="jobTitle" placeholder="Consultant" />
+            <input id="jobTitle" name="jobTitle" />
           </div>
         </div>
 
@@ -228,11 +229,11 @@
         <div class="form-row" style="margin-top: 8px">
           <div class="form-field">
             <label for="mobile">Mobile</label>
-            <input id="mobile" name="mobile" placeholder="+49 170 1234567" />
+            <input id="mobile" name="mobile" />
           </div>
           <div class="form-field">
             <label for="email">Email</label>
-            <input id="email" name="email" placeholder="max@cofinpro.de" />
+            <input id="email" name="email" />
           </div>
         </div>
       </div>

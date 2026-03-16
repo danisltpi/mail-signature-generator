@@ -101,7 +101,8 @@ function populateDataLists() {
   // restore previously saved selection if there was one
   const last = loadLast();
   if (last) {
-    if (firstNameInput && last.FIRST_NAME) firstNameInput.value = last.FIRST_NAME;
+    if (firstNameInput && last.FIRST_NAME)
+      firstNameInput.value = last.FIRST_NAME;
     if (lastNameInput && last.LAST_NAME) lastNameInput.value = last.LAST_NAME;
     if (
       firstNameInput &&
@@ -155,12 +156,12 @@ fetch("signature-template.html")
     signatureTemplate = template;
     // initial render with defaults or saved last
     const defaults = {
-      FIRST_NAME: "Max",
-      LAST_NAME: "Mustermann",
-      JOB_TITLE: "Consultant",
+      FIRST_NAME: "",
+      LAST_NAME: "",
+      JOB_TITLE: "",
       LOCATION: locations.FRANKFURT,
-      MOBILE: "+49 170 1234567",
-      EMAIL: "max.mustermann@cofinpro.de",
+      MOBILE: "+49 ",
+      EMAIL: "",
     };
     const last = loadLast() || defaults;
     renderSignature(last);
@@ -300,7 +301,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const lastNameEl = document.getElementById("lastName");
   const openList = (el) => {
     // attempt to open datalist by sending arrow-down key
-    const ev = new KeyboardEvent("keydown", { key: "ArrowDown", keyCode: 40, which: 40 });
+    const ev = new KeyboardEvent("keydown", {
+      key: "ArrowDown",
+      keyCode: 40,
+      which: 40,
+    });
     el.dispatchEvent(ev);
   };
   if (firstNameEl) {
